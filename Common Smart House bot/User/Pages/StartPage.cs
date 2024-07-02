@@ -1,4 +1,5 @@
-﻿using Common_Smart_House_bot.User.Pages.PageResult;
+﻿using Common_Smart_House_bot.Services;
+using Common_Smart_House_bot.User.Pages.PageResult;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -8,52 +9,50 @@ namespace Common_Smart_House_bot.User.Pages
     {
         public PageResultBase View(Update update, UserState userState)
         {
-            var text = @"Добро пожаловать в Common Smart Home - твой помощник умного дома.
+            var text = @"Добро пожаловать в <b>Common Smart Home</b> - твой помощник умного дома.
 Поддерживаемые системы: Яндекс, Xiaomi, Aqara, LG, IFEEL, Polaris, Roborock, VIDAA, Samsung.";
 
             var replyMarkup = GetReplyKeyboardMarkup();
-            var photoUrl = "https://drive.google.com/uc?export=download&id=1fy5bFlKGosTZ3-NfVbLnD3_BLAwRycyG";
-        
-            return new PhotoPageResult(InputFile.FromUri(photoUrl), text, replyMarkup)
+            var path = "Resources\\Images\\StartPage.jpg";
+            var resource = ResourcesService.GetResources(path);
+
+            return new PageResultBase(text, replyMarkup)
             {
                 UpdatedUserState = new UserState(this, userState.UserData)
             };
         }
 
         public PageResultBase Handle(Update update, UserState userState)
-        {            
-            if (update.Message.Text == "Управление умным домом")
+        {
+            if (update!.CallbackQuery!.Data == "Управление умным домом")
             {
                 return new SmartHomeManagement().View(update, userState);
             }
-            if (update.Message.Text == "Просмотр всех событий")
+            if (update!.CallbackQuery!.Data == "Просмотр всех событий")
             {
                 return new LastEvents().View(update, userState);
             }
-            if (update.Message.Text == "Настройка оповещений")
+            if (update!.CallbackQuery!.Data == "Настройка оповещений")
             {
                 return new SettingUpAlerts().View(update, userState);
             }
             return new PageResultBase("Выберете действие на кнопке", GetReplyKeyboardMarkup()); ;
         }
 
-        private ReplyMarkupBase GetReplyKeyboardMarkup()
+        private IReplyMarkup GetReplyKeyboardMarkup()
         {
-            return new ReplyKeyboardMarkup(
+            return new InlineKeyboardMarkup(
                 [
                     [
-                    new KeyboardButton("Управление умным домом")
+                    InlineKeyboardButton.WithCallbackData("Управление умным домом")
                     ],
                     [
-                    new KeyboardButton("Просмотр всех событий")
+                    InlineKeyboardButton.WithCallbackData("Просмотр всех событий")
                     ],
                     [
-                    new KeyboardButton("Настройка оповещений")
+                    InlineKeyboardButton.WithCallbackData("Настройка оповещений")
                     ]
-                    ])
-            {
-                ResizeKeyboard = true
-            };
+                 ]);
         }
     }
 }

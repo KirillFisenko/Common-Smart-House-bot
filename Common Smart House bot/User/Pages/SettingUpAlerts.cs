@@ -1,4 +1,5 @@
-﻿using Common_Smart_House_bot.User.Pages.PageResult;
+﻿using Common_Smart_House_bot.Services;
+using Common_Smart_House_bot.User.Pages.PageResult;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -16,9 +17,10 @@ namespace Common_Smart_House_bot.User.Pages
 	Умная кнопка	Кухня	   Нажатие	   Aqara";
 
             var replyMarkup = GetReplyKeyboardMarkup();
-            var audioUrl = "https://drive.google.com/uc?export=download&id=1sxJbvnS7hdKDJ6lNgnpHjpdRZ1E_QSXH";
-            
-            return new PageResultBase(text, replyMarkup)
+            var path = "Resources\\Audios\\notification.mp3";
+            var resource = ResourcesService.GetResources(path);
+
+            return new AudioPageResult(resource, text, replyMarkup)
             {
                 UpdatedUserState = new UserState(this, userState.UserData)
             };

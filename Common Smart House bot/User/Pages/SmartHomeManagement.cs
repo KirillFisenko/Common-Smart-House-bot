@@ -1,4 +1,5 @@
-﻿using Common_Smart_House_bot.User.Pages.PageResult;
+﻿using Common_Smart_House_bot.Services;
+using Common_Smart_House_bot.User.Pages.PageResult;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -12,7 +13,8 @@ namespace Common_Smart_House_bot.User.Pages
 Дальнейший функционал не реализован, вернитесь назад";
 
             var replyMarkup = GetReplyKeyboardMarkup();
-            var videoUrl = "https://drive.google.com/uc?export=download&id=123QDAvjDALWe1hQKojL_QxYW7qbSDS8v";
+            var path = "Resources\\Videos\\invideo.mp4";
+            var resource = ResourcesService.GetResources(path);
 
             return new PageResultBase(text, replyMarkup)
             {
@@ -21,25 +23,22 @@ namespace Common_Smart_House_bot.User.Pages
         }
 
         public PageResultBase Handle(Update update, UserState userState)
-        {           
-            if (update.Message.Text == "Назад")
+        {
+            if (update!.CallbackQuery!.Data == "Назад")
             {
                 return new StartPage().View(update, userState);
             }
             return new PageResultBase("Выберете действие на кнопке", GetReplyKeyboardMarkup());
         }
 
-        private ReplyKeyboardMarkup GetReplyKeyboardMarkup()
+        private IReplyMarkup GetReplyKeyboardMarkup()
         {
-            return new ReplyKeyboardMarkup(
+            return new InlineKeyboardMarkup(
                 [
                 [
-                    new KeyboardButton("Назад")
+                    InlineKeyboardButton.WithCallbackData("Назад")
                     ]
-                    ])
-            {
-                ResizeKeyboard = true
-            };
+                    ]);
         }
     }
 }

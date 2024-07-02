@@ -4,6 +4,7 @@ using Common_Smart_House_bot.User.Pages;
 using Common_Smart_House_bot.User.Pages.PageResult;
 using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.ReplyMarkups;
 
 class Program
 {
@@ -25,13 +26,22 @@ class Program
 
     private static async Task HandleUpdate(ITelegramBotClient client, Update update, CancellationToken token)
     {
-        if (update.Message?.Text == null)
+        if (update.Type != Telegram.Bot.Types.Enums.UpdateType.Message &&
+            update.Type != Telegram.Bot.Types.Enums.UpdateType.CallbackQuery)
         {
-            Console.WriteLine($"{DateTime.Now} update_id={update.Id} Отправлено пустое сообщение");
+            Console.WriteLine($"{DateTime.Now} update_id={update.Id} Не отправлено полезной информации");
             return;
         }
 
-        var telegramUserId = update.Message.From.Id;
+        long telegramUserId;
+        if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
+        {
+            telegramUserId = update!.Message!.From!.Id;
+        }
+        else
+        {
+            telegramUserId = update!.CallbackQuery!.From.Id;
+        }
         Console.WriteLine($"{DateTime.Now} update_id={update.Id} telegramuserId={telegramUserId}");
 
         var isExistUserState = storage.TryGet(telegramUserId, out var userState);
@@ -53,7 +63,8 @@ class Program
                                     chatId: telegramUserId,
                                     photo: photoPageResult.Photo,
                                     caption: result.Text,
-                                    replyMarkup: result.ReplyMarkup
+                                    replyMarkup: result.ReplyMarkup,
+                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
                                     );
                     break;
                 case AudioPageResult audioPageResult:
@@ -61,7 +72,8 @@ class Program
                                     chatId: telegramUserId,
                                     audio: audioPageResult.Audio,
                                     caption: result.Text,
-                                    replyMarkup: result.ReplyMarkup
+                                    replyMarkup: result.ReplyMarkup,
+                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
                                     );
                     break;
                 case VideoPageResult videoPageResult:
@@ -69,7 +81,8 @@ class Program
                                     chatId: telegramUserId,
                                     video: videoPageResult.Video,
                                     caption: result.Text,
-                                    replyMarkup: result.ReplyMarkup
+                                    replyMarkup: result.ReplyMarkup,
+                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
                                     );
                     break;
                 case DocumentPageResult documentPageResult:
@@ -77,15 +90,31 @@ class Program
                                     chatId: telegramUserId,
                                     document: documentPageResult.Document,
                                     caption: result.Text,
-                                    replyMarkup: result.ReplyMarkup
+                                    replyMarkup: result.ReplyMarkup,
+                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
                                     );
                     break;
                 default:
-                    await client.SendTextMessageAsync(
-                        chatId: telegramUserId,
-                        text: result.Text,
-                        replyMarkup: result.ReplyMarkup
-                        );
+                    if (!isExistUserState)
+                    {
+                        await client.SendTextMessageAsync(
+                                    chatId: telegramUserId,
+                                    text: result.Text,
+                                    replyMarkup: result.ReplyMarkup,
+                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
+                                    );
+                    }
+                    else
+                    {
+                        await client.EditMessageTextAsync(
+                                    chatId: telegramUserId,
+                                    messageId: update!.CallbackQuery!.Message!.MessageId,
+                                    text: result.Text,
+                                    replyMarkup: (InlineKeyboardMarkup)result.ReplyMarkup,
+                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
+                                    );
+                    }
+                    
                     break;
             }
         }

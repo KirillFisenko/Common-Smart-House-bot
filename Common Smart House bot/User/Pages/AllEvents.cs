@@ -24,7 +24,7 @@ namespace Common_Smart_House_bot.User.Pages
         }
 
         public PageResultBase Handle(Update update, UserState userState)
-        {           
+        {
             if (update.Message.Text == "Назад")
             {
                 return new LastEvents().View(update, userState);

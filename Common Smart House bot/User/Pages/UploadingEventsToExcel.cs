@@ -1,4 +1,5 @@
-﻿using Common_Smart_House_bot.User.Pages.PageResult;
+﻿using Common_Smart_House_bot.Services;
+using Common_Smart_House_bot.User.Pages.PageResult;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -11,9 +12,10 @@ namespace Common_Smart_House_bot.User.Pages
             var text = "Загрузка событий в Excel выполнена.";
 
             var replyMarkup = GetReplyKeyboardMarkup();
-            var documentUrl = "https://drive.google.com/uc?export=download&id=16ssE7zCqwessPRro3VZ5wQkztgxUHuoc";
-            
-            return new PageResultBase(text, replyMarkup)
+            var path = "Resources\\Documents\\Export.xlsx";
+            var resource = ResourcesService.GetResources(path);
+
+            return new DocumentPageResult(resource, text, replyMarkup)
             {
                 UpdatedUserState = new UserState(this, userState.UserData)
             };
