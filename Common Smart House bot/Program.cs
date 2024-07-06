@@ -42,92 +42,188 @@ class Program
         {
             telegramUserId = update!.CallbackQuery!.From.Id;
         }
-        Console.WriteLine($"{DateTime.Now} update_id={update.Id} telegramuserId={telegramUserId}");
+        Console.WriteLine($"{DateTime.Now} update_id={update.Id} telegramUserId={telegramUserId}");
 
         var isExistUserState = storage.TryGet(telegramUserId, out var userState);
 
-        if (!isExistUserState)
+        if (!isExistUserState) // если нет состояния
         {
-            userState = new UserState(new NotStatedPage(), new UserData());
+            userState = new UserState(new Stack<IPage>([new NotStatedPage()]), new UserData());
         }
         Console.WriteLine($"{DateTime.Now} update_id={update.Id} CURRENT_userState={userState}");
 
-        var result = userState?.Page.Handle(update, userState);
+        var result = userState!.CurrentPage.Handle(update, userState);
         Console.WriteLine($"{DateTime.Now} update_id={update.Id} send_text={result.Text} UPDATED_UserState={result.UpdatedUserState}");
-        try
+        var lastMessage = await SendResult(client, update, telegramUserId, result);
+        result.UpdatedUserState.UserData.LastMessage = new Common_Smart_House_bot.User.Message(lastMessage.MessageId, result.IsMedia);
+        storage.AddOrUpdate(telegramUserId, result.UpdatedUserState);
+    }
+
+    private static async Task<Telegram.Bot.Types.Message> SendResult(ITelegramBotClient client, Update update, long telegramUserId, PageResultBase? result)
+    {
+        switch (result)
         {
-            switch (result)
-            {
-                case PhotoPageResult photoPageResult:
-                    await client.SendPhotoAsync(
-                                    chatId: telegramUserId,
-                                    photo: photoPageResult.Photo,
-                                    caption: result.Text,
-                                    replyMarkup: result.ReplyMarkup,
-                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
-                                    );
-                    break;
-                case AudioPageResult audioPageResult:
-                    await client.SendAudioAsync(
-                                    chatId: telegramUserId,
-                                    audio: audioPageResult.Audio,
-                                    caption: result.Text,
-                                    replyMarkup: result.ReplyMarkup,
-                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
-                                    );
-                    break;
-                case VideoPageResult videoPageResult:
-                    await client.SendVideoAsync(
-                                    chatId: telegramUserId,
-                                    video: videoPageResult.Video,
-                                    caption: result.Text,
-                                    replyMarkup: result.ReplyMarkup,
-                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
-                                    );
-                    break;
-                case DocumentPageResult documentPageResult:
-                    await client.SendDocumentAsync(
-                                    chatId: telegramUserId,
-                                    document: documentPageResult.Document,
-                                    caption: result.Text,
-                                    replyMarkup: result.ReplyMarkup,
-                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
-                                    );
-                    break;
-                default:
-                    if (!isExistUserState)
+            case PhotoPageResult photoPageResult:
+                return await SendPhoto(client, update, telegramUserId, photoPageResult);
+            case AudioPageResult audioPageResult:
+                return await SendAudio(client, update, telegramUserId, audioPageResult);
+            case VideoPageResult videoPageResult:
+                return await SendVideo(client, update, telegramUserId, videoPageResult);
+            case DocumentPageResult documentPageResult:
+                return await SendDocument(client, update, telegramUserId, documentPageResult);
+            default:
+                return await SendText(client, update, telegramUserId, result);
+        }
+    }
+
+    private static async Task<Telegram.Bot.Types.Message> SendPhoto(ITelegramBotClient client, Update update, long telegramUserId, PhotoPageResult result)
+    {
+        if (update.CallbackQuery != null && (result.UpdatedUserState.UserData.LastMessage?.IsMedia ?? false))
+        {
+            return await client.EditMessageMediaAsync(
+                    chatId: telegramUserId,
+                    messageId: result.UpdatedUserState.UserData.LastMessage.Id,
+                    media: new InputMediaPhoto(result.Photo)
                     {
-                        await client.SendTextMessageAsync(
-                                    chatId: telegramUserId,
-                                    text: result.Text,
-                                    replyMarkup: result.ReplyMarkup,
-                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
-                                    );
-                    }
-                    else
+                        Caption = result.Text,
+                        ParseMode = Telegram.Bot.Types.Enums.ParseMode.Html
+                    },
+                    replyMarkup: (InlineKeyboardMarkup)result.ReplyMarkup
+                    );
+        }
+
+        if (result.UpdatedUserState.UserData.LastMessage != null)
+        {
+            await client.DeleteMessageAsync(chatId: telegramUserId,
+                                            messageId: result.UpdatedUserState.UserData.LastMessage.Id);
+        }
+
+        return await client.SendPhotoAsync(
+                                        chatId: telegramUserId,
+                                        photo: result.Photo,
+                                        caption: result.Text,
+                                        replyMarkup: result.ReplyMarkup,
+                                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
+                                        );
+    }
+
+    private static async Task<Telegram.Bot.Types.Message> SendVideo(ITelegramBotClient client, Update update, long telegramUserId, VideoPageResult result)
+    {
+        if (update.CallbackQuery != null && (result.UpdatedUserState.UserData.LastMessage?.IsMedia ?? false))
+        {
+            return await client.EditMessageMediaAsync(
+                    chatId: telegramUserId,
+                    messageId: result.UpdatedUserState.UserData.LastMessage.Id,
+                    media: new InputMediaVideo(result.Video)
                     {
-                        await client.EditMessageTextAsync(
-                                    chatId: telegramUserId,
-                                    messageId: update!.CallbackQuery!.Message!.MessageId,
-                                    text: result.Text,
-                                    replyMarkup: (InlineKeyboardMarkup)result.ReplyMarkup,
-                                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
-                                    );
-                    }
-                    
-                    break;
-            }
+                        Caption = result.Text,
+                        ParseMode = Telegram.Bot.Types.Enums.ParseMode.Html
+                    },
+                    replyMarkup: (InlineKeyboardMarkup)result.ReplyMarkup
+                    );
         }
-        catch
+
+        if (result.UpdatedUserState.UserData.LastMessage != null)
         {
-            await client.SendTextMessageAsync(
-                chatId: telegramUserId,
-                text: "Возникла ошибка, попробуйте еще раз");
-            Console.WriteLine($"{DateTime.Now} update_id={update.Id} {update.Message} error");
+            await client.DeleteMessageAsync(chatId: telegramUserId,
+                                            messageId: result.UpdatedUserState.UserData.LastMessage.Id);
         }
-        finally
+
+        return await client.SendVideoAsync(
+                                        chatId: telegramUserId,
+                                        video: result.Video,
+                                        caption: result.Text,
+                                        replyMarkup: result.ReplyMarkup,
+                                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
+                                        );
+    }
+
+    private static async Task<Telegram.Bot.Types.Message> SendAudio(ITelegramBotClient client, Update update, long telegramUserId, AudioPageResult result)
+    {
+        if (update.CallbackQuery != null && (result.UpdatedUserState.UserData.LastMessage?.IsMedia ?? false))
         {
-            storage.AddOrUpdate(telegramUserId, result.UpdatedUserState);
+            return await client.EditMessageMediaAsync(
+                    chatId: telegramUserId,
+                    messageId: result.UpdatedUserState.UserData.LastMessage.Id,
+                    media: new InputMediaAudio(result.Audio)
+                    {
+                        Caption = result.Text,
+                        ParseMode = Telegram.Bot.Types.Enums.ParseMode.Html
+                    },
+                    replyMarkup: (InlineKeyboardMarkup)result.ReplyMarkup
+                    );
         }
+
+        if (result.UpdatedUserState.UserData.LastMessage != null)
+        {
+            await client.DeleteMessageAsync(chatId: telegramUserId,
+                                            messageId: result.UpdatedUserState.UserData.LastMessage.Id);
+        }
+
+        return await client.SendAudioAsync(
+                                        chatId: telegramUserId,
+                                        audio: result.Audio,
+                                        caption: result.Text,
+                                        replyMarkup: result.ReplyMarkup,
+                                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
+                                        );
+    }
+
+    private static async Task<Telegram.Bot.Types.Message> SendDocument(ITelegramBotClient client, Update update, long telegramUserId, DocumentPageResult result)
+    {
+        if (update.CallbackQuery != null && (result.UpdatedUserState.UserData.LastMessage?.IsMedia ?? false))
+        {
+            return await client.EditMessageMediaAsync(
+                    chatId: telegramUserId,
+                    messageId: result.UpdatedUserState.UserData.LastMessage.Id,
+                    media: new InputMediaDocument(result.Document)
+                    {
+                        Caption = result.Text,
+                        ParseMode = Telegram.Bot.Types.Enums.ParseMode.Html
+                    },
+                    replyMarkup: (InlineKeyboardMarkup)result.ReplyMarkup
+                    );
+        }
+
+        if (result.UpdatedUserState.UserData.LastMessage != null)
+        {
+            await client.DeleteMessageAsync(chatId: telegramUserId,
+                                            messageId: result.UpdatedUserState.UserData.LastMessage.Id);
+        }
+
+        return await client.SendDocumentAsync(
+                                        chatId: telegramUserId,
+                                        document: result.Document,
+                                        caption: result.Text,
+                                        replyMarkup: result.ReplyMarkup,
+                                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
+                                        );
+    }
+
+    private static async Task<Telegram.Bot.Types.Message> SendText(ITelegramBotClient client, Update update, long telegramUserId, PageResultBase? result)
+    {
+        if (update.CallbackQuery != null && (!result.UpdatedUserState.UserData.LastMessage?.IsMedia ?? false))
+        {
+            return await client.EditMessageTextAsync(
+                    chatId: telegramUserId,
+                    messageId: result.UpdatedUserState.UserData.LastMessage!.Id,
+                    text: result.Text,
+                    replyMarkup: (InlineKeyboardMarkup)result.ReplyMarkup,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
+                    );
+        }
+
+        if (result.UpdatedUserState.UserData.LastMessage != null)
+        {
+            await client.DeleteMessageAsync(chatId: telegramUserId,
+                                            messageId: result.UpdatedUserState.UserData.LastMessage.Id);
+        }
+
+        return await client.SendTextMessageAsync(
+                        chatId: telegramUserId,
+                        text: result.Text,
+                        replyMarkup: result.ReplyMarkup,
+                        parseMode: Telegram.Bot.Types.Enums.ParseMode.Html
+                        );
     }
 }

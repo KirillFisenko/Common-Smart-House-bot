@@ -15,15 +15,20 @@ namespace Common_Smart_House_bot.User.Pages
             var replyMarkup = GetReplyKeyboardMarkup();
             var path = "Resources\\Videos\\invideo.mp4";
             var resource = ResourcesService.GetResources(path);
-
-            return new PageResultBase(text, replyMarkup)
+            userState.AddPage(this);
+            return new VideoPageResult(resource, text, replyMarkup)
             {
-                UpdatedUserState = new UserState(this, userState.UserData)
+                UpdatedUserState = userState
             };
         }
 
         public PageResultBase Handle(Update update, UserState userState)
         {
+            if (update.Message != null)
+            {
+                userState.UserData.UserId = int.Parse(update.Message.Text); //пример ввода данных от пользователя
+                return new StartPage().View(update, userState);
+            }
             if (update!.CallbackQuery!.Data == "Назад")
             {
                 return new StartPage().View(update, userState);

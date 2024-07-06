@@ -7,7 +7,8 @@ namespace Common_Smart_House_bot.Services
         public static InputFileStream GetResources(string path)
         {
             var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            return InputFile.FromStream(fileStream);
+            var filename = path.Split("\\").Last();
+            return InputFile.FromStream(fileStream, filename);
         }
     }
 }

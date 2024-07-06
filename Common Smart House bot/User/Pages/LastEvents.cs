@@ -14,47 +14,45 @@ namespace Common_Smart_House_bot.User.Pages
 23.05.2024 13:08	Датчик климата	Спальня	 28’	    Aqara";
 
             var replyMarkup = GetReplyKeyboardMarkup();
-
+            userState.AddPage(this);
             return new PageResultBase(text, replyMarkup)
             {
-                UpdatedUserState = new UserState(this, userState.UserData)
+                UpdatedUserState = userState
             };
         }
 
         public PageResultBase Handle(Update update, UserState userState)
-        {            
-            if (update.Message.Text == "Назад")
+        {
+            if (update!.CallbackQuery!.Data == "Назад")
             {
-                return new StartPage().View(update, userState);
+                userState.Pages.Pop();
+                return userState.CurrentPage.View(update, userState);
             }
-            if (update.Message.Text == "Посмотреть больше")
+            if (update!.CallbackQuery!.Data == "Посмотреть больше")
             {
                 return new AllEvents().View(update, userState);
             }
-            if (update.Message.Text == "Скачать все события в Excel")
+            if (update!.CallbackQuery!.Data == "Скачать все события в Excel")
             {
                 return new UploadingEventsToExcel().View(update, userState);
             }
             return new PageResultBase("Выберете действие на кнопке", GetReplyKeyboardMarkup());
         }
 
-        private ReplyKeyboardMarkup GetReplyKeyboardMarkup()
+        private IReplyMarkup GetReplyKeyboardMarkup()
         {
-            return new ReplyKeyboardMarkup(
+            return new InlineKeyboardMarkup(
                 [
                     [
-                    new KeyboardButton("Назад")
+                    InlineKeyboardButton.WithCallbackData("Назад")
                     ],
                     [
-                    new KeyboardButton("Посмотреть больше")
+                    InlineKeyboardButton.WithCallbackData("Посмотреть больше")
                     ],
                     [
-                    new KeyboardButton("Скачать все события в Excel")
+                    InlineKeyboardButton.WithCallbackData("Скачать все события в Excel")
                     ]
-                 ])
-            {
-                ResizeKeyboard = true
-            };
+                 ]);
         }
     }
 }

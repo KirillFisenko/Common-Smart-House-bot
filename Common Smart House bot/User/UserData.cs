@@ -2,8 +2,8 @@
 {
     public class UserData
     {
-        public int UserId { get; set; }
-
+        public int? UserId { get; set; }
+        public Message? LastMessage { get; set; }
         public override string ToString()
         {
             return $"{UserId}";

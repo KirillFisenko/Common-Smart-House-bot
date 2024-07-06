@@ -19,33 +19,31 @@ namespace Common_Smart_House_bot.User.Pages
             var replyMarkup = GetReplyKeyboardMarkup();
             var path = "Resources\\Audios\\notification.mp3";
             var resource = ResourcesService.GetResources(path);
-
+            userState.AddPage(this);
             return new AudioPageResult(resource, text, replyMarkup)
             {
-                UpdatedUserState = new UserState(this, userState.UserData)
+                UpdatedUserState = userState
             };
         }
 
         public PageResultBase Handle(Update update, UserState userState)
         {
-            if (update.Message.Text == "Назад")
+            if (update!.CallbackQuery!.Data == "Назад")
             {
-                return new StartPage().View(update, userState);
+                userState.Pages.Pop();
+                return userState.CurrentPage.View(update, userState);
             }
             return new PageResultBase("Выберете действие на кнопке", GetReplyKeyboardMarkup());
         }
 
-        private ReplyKeyboardMarkup GetReplyKeyboardMarkup()
+        private IReplyMarkup GetReplyKeyboardMarkup()
         {
-            return new ReplyKeyboardMarkup(
+            return new InlineKeyboardMarkup(
                 [
                     [
-                    new KeyboardButton("Назад")
+                    InlineKeyboardButton.WithCallbackData("Назад")
                     ]
-                    ])
-            {
-                ResizeKeyboard = true
-            };
+                    ]);
         }
     }
 }

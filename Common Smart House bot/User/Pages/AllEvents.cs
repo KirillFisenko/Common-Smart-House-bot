@@ -16,40 +16,38 @@ namespace Common_Smart_House_bot.User.Pages
 20.05.2024 11:08	    Умная кнопка	 Кухня	    Нажатие	    Aqara";
 
             var replyMarkup = GetReplyKeyboardMarkup();
-
+            userState.AddPage(this);
             return new PageResultBase(text, replyMarkup)
             {
-                UpdatedUserState = new UserState(this, userState.UserData)
+                UpdatedUserState = userState
             };
         }
 
         public PageResultBase Handle(Update update, UserState userState)
         {
-            if (update.Message.Text == "Назад")
+            if (update!.CallbackQuery!.Data == "Назад")
             {
-                return new LastEvents().View(update, userState);
+                userState.Pages.Pop();
+                return userState.CurrentPage.View(update, userState);
             }
-            if (update.Message.Text == "Скачать все события в Excel")
+            if (update!.CallbackQuery!.Data == "Скачать все события в Excel")
             {
                 return new UploadingEventsToExcel().View(update, userState);
             }
             return new PageResultBase("Выберете действие на кнопке", GetReplyKeyboardMarkup());
         }
 
-        private ReplyKeyboardMarkup GetReplyKeyboardMarkup()
+        private IReplyMarkup GetReplyKeyboardMarkup()
         {
-            return new ReplyKeyboardMarkup(
+            return new InlineKeyboardMarkup(
                 [
                 [
-                    new KeyboardButton("Назад")
+                    InlineKeyboardButton.WithCallbackData("Назад")
                     ],
                     [
-                    new KeyboardButton("Скачать все события в Excel")
+                    InlineKeyboardButton.WithCallbackData("Скачать все события в Excel")
                     ]
-                    ])
-            {
-                ResizeKeyboard = true
-            };
+                    ]);
         }
     }
 }

@@ -15,10 +15,10 @@ namespace Common_Smart_House_bot.User.Pages
             var replyMarkup = GetReplyKeyboardMarkup();
             var path = "Resources\\Images\\StartPage.jpg";
             var resource = ResourcesService.GetResources(path);
-
-            return new PageResultBase(text, replyMarkup)
+            userState.AddPage(this);
+            return new PhotoPageResult(resource, text, replyMarkup)
             {
-                UpdatedUserState = new UserState(this, userState.UserData)
+                UpdatedUserState = userState
             };
         }
 

@@ -14,40 +14,38 @@ namespace Common_Smart_House_bot.User.Pages
             var replyMarkup = GetReplyKeyboardMarkup();
             var path = "Resources\\Documents\\Export.xlsx";
             var resource = ResourcesService.GetResources(path);
-
+            userState.AddPage(this);
             return new DocumentPageResult(resource, text, replyMarkup)
             {
-                UpdatedUserState = new UserState(this, userState.UserData)
+                UpdatedUserState = userState
             };
         }
 
         public PageResultBase Handle(Update update, UserState userState)
         {
-            if (update.Message.Text == "Назад")
+            if (update!.CallbackQuery!.Data == "Назад")
             {
-                return new LastEvents().View(update, userState);
+                userState.Pages.Pop();
+                return userState.CurrentPage.View(update, userState);
             }
-            if (update.Message.Text == "На главную")
+            if (update!.CallbackQuery!.Data == "На главную")
             {
                 return new StartPage().View(update, userState);
             }
             return new PageResultBase("Выберете действие на кнопке", GetReplyKeyboardMarkup());
         }
 
-        private ReplyKeyboardMarkup GetReplyKeyboardMarkup()
+        private IReplyMarkup GetReplyKeyboardMarkup()
         {
-            return new ReplyKeyboardMarkup(
+            return new InlineKeyboardMarkup(
                 [
                     [
-                    new KeyboardButton("Назад")
+                    InlineKeyboardButton.WithCallbackData("Назад")
                     ],
                     [
-                    new KeyboardButton("На главную")
+                    InlineKeyboardButton.WithCallbackData("На главную")
                     ]
-                 ])
-            {
-                ResizeKeyboard = true
-            };
+                 ]);
         }
     }
 }
