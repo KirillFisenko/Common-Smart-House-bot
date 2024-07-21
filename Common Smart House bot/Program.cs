@@ -6,10 +6,11 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
-class Program
+internal class Program
 {
-    static UserStateStorage storage = new UserStateStorage();
-    static async Task Main()
+    private static UserStateStorage storage = new UserStateStorage();
+
+    private static async Task Main()
     {
         var TOKEN = "7267979726:AAEam6VLHENjtsPxqxwWTzorkntxerY3vBY";
         var telegramApiClient = new TelegramBotClient(TOKEN);
@@ -33,20 +34,12 @@ class Program
             return;
         }
 
-        long telegramUserId;
-        if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
-        {
-            telegramUserId = update!.Message!.From!.Id;
-        }
-        else
-        {
-            telegramUserId = update!.CallbackQuery!.From.Id;
-        }
+        long telegramUserId = update.Type == Telegram.Bot.Types.Enums.UpdateType.Message ? update!.Message!.From!.Id : update!.CallbackQuery!.From.Id;
         Console.WriteLine($"{DateTime.Now} update_id={update.Id} telegramUserId={telegramUserId}");
 
-        var isExistUserState = storage.TryGet(telegramUserId, out var userState);
+        var userState = await storage.TryGetAsync(telegramUserId);
 
-        if (!isExistUserState) // если нет состояния
+        if (userState == null)
         {
             userState = new UserState(new Stack<IPage>([new NotStatedPage()]), new UserData());
         }
@@ -56,7 +49,7 @@ class Program
         Console.WriteLine($"{DateTime.Now} update_id={update.Id} send_text={result.Text} UPDATED_UserState={result.UpdatedUserState}");
         var lastMessage = await SendResult(client, update, telegramUserId, result);
         result.UpdatedUserState.UserData.LastMessage = new Common_Smart_House_bot.User.Message(lastMessage.MessageId, result.IsMedia);
-        storage.AddOrUpdate(telegramUserId, result.UpdatedUserState);
+        storage.AddOrUpdateAsync(telegramUserId, result.UpdatedUserState);
     }
 
     private static async Task<Telegram.Bot.Types.Message> SendResult(ITelegramBotClient client, Update update, long telegramUserId, PageResultBase? result)

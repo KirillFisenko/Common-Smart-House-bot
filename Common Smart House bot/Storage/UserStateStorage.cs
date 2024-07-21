@@ -1,20 +1,38 @@
-﻿using Common_Smart_House_bot.User;
-using System.Collections.Concurrent;
+﻿using Common_Smart_House_bot.Firebase;
+using Common_Smart_House_bot.User;
+using Common_Smart_House_bot.User.Pages;
 
 namespace Common_Smart_House_bot.Storage
 {
     public class UserStateStorage
     {
-        private readonly ConcurrentDictionary<long, UserState> cache = new ConcurrentDictionary<long, UserState>();
+        private readonly FirebaseProvider firebaseProvider = new();
 
-        public void AddOrUpdate(long telegramUserId, UserState userState)
+        public async Task AddOrUpdateAsync(long telegramUserId, UserState userState)
         {
-            cache.AddOrUpdate(telegramUserId, userState, (x, y) => userState);
+            var userStateFirebase = ToUserStateFirebase(userState);
+            await firebaseProvider.AddOrUpdateAsync($"userStates/{telegramUserId}", userStateFirebase);
         }
 
-        public bool TryGet(long telegramUserId, out UserState? userState)
+        public async Task<UserState> TryGetAsync(long telegramUserId)
         {
-            return cache.TryGetValue(telegramUserId, out userState);
+            var userStateFirebase = await firebaseProvider.TryGetAsync<UserStateFirebase>($"userStates/{telegramUserId}");
+            return userStateFirebase == null ? null : ToUserState(userStateFirebase);
+        }
+
+        private static UserStateFirebase ToUserStateFirebase(UserState userState)
+        {
+            return new UserStateFirebase
+            {
+                UserData = userState.UserData,
+                PagesNames = userState.Pages.Select(x => x.GetType().Name).ToList()
+            };
+        }
+
+        private static UserState ToUserState(UserStateFirebase userStateFirebase)
+        {
+            var pages = userStateFirebase.PagesNames.Select(PagesFactory.GetPage).Reverse();
+            return new UserState(new Stack<IPage>(pages), userStateFirebase.UserData);
         }
     }
 }

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common Smart House bot", "Common Smart House bot\Common Smart House bot.csproj", "{5E651BE4-E33B-4515-B240-05273AB23074}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common Smart House bot", "Common Smart House bot\Common Smart House bot.csproj", "{5E651BE4-E33B-4515-B240-05273AB23074}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common_Smart_House_bot_Tests", "Common_Smart_House_bot_Tests\Common_Smart_House_bot_Tests.csproj", "{87C84572-A05F-486F-990F-D30B01C7A8B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{5E651BE4-E33B-4515-B240-05273AB23074}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E651BE4-E33B-4515-B240-05273AB23074}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E651BE4-E33B-4515-B240-05273AB23074}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87C84572-A05F-486F-990F-D30B01C7A8B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87C84572-A05F-486F-990F-D30B01C7A8B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87C84572-A05F-486F-990F-D30B01C7A8B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87C84572-A05F-486F-990F-D30B01C7A8B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,7 +5,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Common_Smart_House_bot.User.Pages
 {
-    public class UploadingEventsToExcel : IPage
+    public class UploadingEventsToExcelPage : IPage
     {
         public PageResultBase View(Update update, UserState userState)
         {
@@ -23,6 +23,10 @@ namespace Common_Smart_House_bot.User.Pages
 
         public PageResultBase Handle(Update update, UserState userState)
         {
+            if (update.CallbackQuery == null)
+            {
+                return View(update, userState);
+            }
             if (update!.CallbackQuery!.Data == "Назад")
             {
                 userState.Pages.Pop();
@@ -32,7 +36,7 @@ namespace Common_Smart_House_bot.User.Pages
             {
                 return new StartPage().View(update, userState);
             }
-            return new PageResultBase("Выберете действие на кнопке", GetReplyKeyboardMarkup());
+            return View(update, userState);
         }
 
         private IReplyMarkup GetReplyKeyboardMarkup()

@@ -9,9 +9,7 @@ namespace Common_Smart_House_bot.User.Pages
     {
         public PageResultBase View(Update update, UserState userState)
         {
-            var text = @"Добро пожаловать в <b>Common Smart Home</b> - твой помощник умного дома.
-Поддерживаемые системы: Яндекс, Xiaomi, Aqara, LG, IFEEL, Polaris, Roborock, VIDAA, Samsung.";
-
+            var text = Resources.StartPageText;
             var replyMarkup = GetReplyKeyboardMarkup();
             var path = "Resources\\Images\\StartPage.jpg";
             var resource = ResourcesService.GetResources(path);
@@ -24,19 +22,23 @@ namespace Common_Smart_House_bot.User.Pages
 
         public PageResultBase Handle(Update update, UserState userState)
         {
-            if (update!.CallbackQuery!.Data == "Управление умным домом")
-            {
-                return new SmartHomeManagement().View(update, userState);
+            if (update.CallbackQuery == null) 
+            { 
+                return View(update, userState);
             }
-            if (update!.CallbackQuery!.Data == "Просмотр всех событий")
+            if (update.CallbackQuery.Data == "Управление умным домом")
             {
-                return new LastEvents().View(update, userState);
+                return new SmartHomeManagementPage().View(update, userState);
             }
-            if (update!.CallbackQuery!.Data == "Настройка оповещений")
+            if (update.CallbackQuery.Data == "Просмотр всех событий")
             {
-                return new SettingUpAlerts().View(update, userState);
+                return new LastEventsPage().View(update, userState);
             }
-            return new PageResultBase("Выберете действие на кнопке", GetReplyKeyboardMarkup()); ;
+            if (update.CallbackQuery.Data == "Настройка оповещений")
+            {
+                return new SettingUpAlertsPage().View(update, userState);
+            }
+            return View(update, userState);
         }
 
         private IReplyMarkup GetReplyKeyboardMarkup()
