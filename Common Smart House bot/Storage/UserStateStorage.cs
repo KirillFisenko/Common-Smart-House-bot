@@ -4,10 +4,8 @@ using Common_Smart_House_bot.User.Pages;
 
 namespace Common_Smart_House_bot.Storage
 {
-    public class UserStateStorage
+    public class UserStateStorage(FirebaseProvider firebaseProvider)
     {
-        private readonly FirebaseProvider firebaseProvider = new();
-
         public async Task AddOrUpdateAsync(long telegramUserId, UserState userState)
         {
             var userStateFirebase = ToUserStateFirebase(userState);
