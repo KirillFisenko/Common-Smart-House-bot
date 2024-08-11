@@ -11,8 +11,8 @@ namespace Common_Smart_House_bot.User.Pages
         {
             var text = Resources.StartPageText;
             var replyMarkup = GetReplyKeyboardMarkup();
-            var path = "Resources\\Images\\StartPage.jpg";
-            var resource = ResourcesService.GetResources(path);
+            var image = Resources.StartPage;
+            var resource = ResourcesService.GetResources(image);
             userState.AddPage(this);
             return new PhotoPageResult(resource, text, replyMarkup)
             {
@@ -22,23 +22,17 @@ namespace Common_Smart_House_bot.User.Pages
 
         public PageResultBase Handle(Update update, UserState userState)
         {
-            if (update.CallbackQuery == null) 
-            { 
+            if (update.CallbackQuery == null)
+            {
                 return View(update, userState);
             }
-            if (update.CallbackQuery.Data == "Управление умным домом")
-            {
-                return new SmartHomeManagementPage().View(update, userState);
-            }
-            if (update.CallbackQuery.Data == "Просмотр всех событий")
-            {
-                return new LastEventsPage().View(update, userState);
-            }
-            if (update.CallbackQuery.Data == "Настройка оповещений")
-            {
-                return new SettingUpAlertsPage().View(update, userState);
-            }
-            return View(update, userState);
+            return update.CallbackQuery.Data == "Управление умным домом"
+                ? new SmartHomeManagementPage().View(update, userState)
+                : update.CallbackQuery.Data == "Просмотр всех событий"
+                ? new LastEventsPage().View(update, userState)
+                : update.CallbackQuery.Data == "Настройка оповещений"
+                ? new SettingUpAlertsPage().View(update, userState)
+                : View(update, userState);
         }
 
         private IReplyMarkup GetReplyKeyboardMarkup()

@@ -12,8 +12,8 @@ namespace Common_Smart_House_bot.User.Pages
             var text = "Загрузка событий в Excel выполнена.";
 
             var replyMarkup = GetReplyKeyboardMarkup();
-            var path = "Resources\\Documents\\Export.xlsx";
-            var resource = ResourcesService.GetResources(path);
+            var file = Resources.Export;
+            var resource = ResourcesService.GetResources(file);
             userState.AddPage(this);
             return new DocumentPageResult(resource, text, replyMarkup)
             {
@@ -32,11 +32,7 @@ namespace Common_Smart_House_bot.User.Pages
                 userState.Pages.Pop();
                 return userState.CurrentPage.View(update, userState);
             }
-            if (update!.CallbackQuery!.Data == "На главную")
-            {
-                return new StartPage().View(update, userState);
-            }
-            return View(update, userState);
+            return update!.CallbackQuery!.Data == "На главную" ? new StartPage().View(update, userState) : View(update, userState);
         }
 
         private IReplyMarkup GetReplyKeyboardMarkup()

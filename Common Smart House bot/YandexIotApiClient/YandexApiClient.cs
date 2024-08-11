@@ -21,6 +21,14 @@ namespace Common_Smart_House_bot.YandexIotApiClient
             return await response.Content.ReadAsStringAsync();
         }
 
+        public static async Task<string> GetUserInfoAsync()
+        {
+            var url = "https://api.iot.yandex.net/v1.0/user/info";
+            var response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
         public static async Task TurnOnOff(string device_id, bool action)
         {
             var requestBody = new

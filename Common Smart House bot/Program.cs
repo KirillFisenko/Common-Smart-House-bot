@@ -1,18 +1,17 @@
-﻿using Common_Smart_House_bot.Storage;
-using Telegram.Bot;
-using Telegram.Bot.Polling;
+﻿using Common_Smart_House_bot;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-internal partial class Program
+public class Program
 {
-    private static UserStateStorage storage = new UserStateStorage();
-
-    private static async Task Main()
+    public static async Task Main(string[] args)
     {
-        var TOKEN = "7267979726:AAEam6VLHENjtsPxqxwWTzorkntxerY3vBY";
-        var telegramApiClient = new TelegramBotClient(TOKEN);
-        var user = await telegramApiClient.GetMeAsync();
-        Console.WriteLine($"{DateTime.Now} Начали слушать апдейты пользователя {user.Username}");
-        telegramApiClient.StartReceiving(IUpdateHandler updateHandler);
-        Console.ReadLine();
+        var host = Host.CreateDefaultBuilder(args).ConfigureServices((context, services) =>
+        {
+            ContainerConfigurator.Configure(context.Configuration, services);
+            services.AddHostedService<LongPoolingConfigurator>();
+        }).Build();
+
+        await host.RunAsync();
     }
 }

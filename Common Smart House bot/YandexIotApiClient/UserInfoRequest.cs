@@ -341,7 +341,7 @@ namespace Common_Smart_House_bot.YandexIotApiClient
         public static Rootobject GetYandexUserInfo()
         {
             string json;
-            using (StreamReader reader = new StreamReader("C:\\Users\\KirillFisenko\\source\\repos\\Common Smart House bot\\Common Smart House bot\\YandexIotApiClient\\response.json"))
+            using (StreamReader reader = new StreamReader("C:\\Users\\justi\\source\\repos\\Common-Smart-House-bot\\Common Smart House bot\\YandexIotApiClient\\response.json"))
             {
                 json = reader.ReadToEnd();
             }

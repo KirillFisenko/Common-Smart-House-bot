@@ -1,0 +1,3 @@
+zrok disable
+zrok enable 5PfWkHJSmrK9
+zrok share public https://localhost:7247
