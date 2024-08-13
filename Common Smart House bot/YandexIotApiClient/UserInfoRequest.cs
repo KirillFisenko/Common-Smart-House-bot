@@ -116,6 +116,7 @@ namespace Common_Smart_House_bot.YandexIotApiClient
             public string type { get; set; }
             public Parameters1 parameters { get; set; }
             public State1 state { get; set; }
+            public float state_changed_at { get; set; }
             public float last_updated { get; set; }
         }
 
@@ -257,6 +258,7 @@ namespace Common_Smart_House_bot.YandexIotApiClient
             public string type { get; set; }
             public Parameters4 parameters { get; set; }
             public State3 state { get; set; }
+            public float state_changed_at { get; set; }
             public float last_updated { get; set; }
         }
 
@@ -297,25 +299,21 @@ namespace Common_Smart_House_bot.YandexIotApiClient
             public string type { get; set; }
             public Parameters5 parameters { get; set; }
             public State4 state { get; set; }
+            public float state_changed_at { get; set; }
             public float last_updated { get; set; }
         }
 
         public class Parameters5
         {
             public string instance { get; set; }
+            public bool split { get; set; }
         }
 
         public class State4
         {
             public string instance { get; set; }
-            public Value1 value { get; set; }
-        }
-
-        public class Value1
-        {
-            public string text { get; set; }
-            public bool whisper { get; set; }
-            public string lang { get; set; }
+            public object value { get; set; }
+            public bool relative { get; set; }
         }
 
         public class Trigger
@@ -338,14 +336,11 @@ namespace Common_Smart_House_bot.YandexIotApiClient
             public string type { get; set; }
         }
 
+
         public static Rootobject GetYandexUserInfo()
         {
-            string json;
-            using (StreamReader reader = new StreamReader("C:\\Users\\justi\\source\\repos\\Common-Smart-House-bot\\Common Smart House bot\\YandexIotApiClient\\response.json"))
-            {
-                json = reader.ReadToEnd();
-            }
-            return JsonConvert.DeserializeObject<Rootobject>(json);
+            string Request = YandexApiClient.GetUserInfoAsync().Result;
+            return JsonConvert.DeserializeObject<Rootobject>(Request);
         }
     }
 }

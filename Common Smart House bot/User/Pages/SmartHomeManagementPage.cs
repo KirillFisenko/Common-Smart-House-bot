@@ -11,7 +11,7 @@ namespace Common_Smart_House_bot.User.Pages
         public PageResultBase View(Update update, UserState userState)
         {
             var text = @"Управление умным домом";
-            var rootObject = UserInfoRequest.GetYandexUserInfo();
+            var rootObject = GetYandexUserInfo();
             var yandexRooms = rootObject.rooms;
             var replyMarkup = GetReplyKeyboardMarkup(rootObject, yandexRooms);
             userState.AddPage(this);
