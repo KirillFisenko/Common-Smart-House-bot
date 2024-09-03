@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common Smart House bot", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common_Smart_House_bot_Tests", "Common_Smart_House_bot_Tests\Common_Smart_House_bot_Tests.csproj", "{87C84572-A05F-486F-990F-D30B01C7A8B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webhook", "Webhook\Webhook.csproj", "{4EBFDBC4-21B6-4AB3-8501-9F2AFFAE0E6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webhook", "Webhook\Webhook.csproj", "{4EBFDBC4-21B6-4AB3-8501-9F2AFFAE0E6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common-Smart-House-bot_common", "Common-Smart-House-bot_common\Common-Smart-House-bot_common.csproj", "{26E47032-0A52-45DC-AA24-C2CA9ABC11B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{4EBFDBC4-21B6-4AB3-8501-9F2AFFAE0E6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4EBFDBC4-21B6-4AB3-8501-9F2AFFAE0E6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EBFDBC4-21B6-4AB3-8501-9F2AFFAE0E6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26E47032-0A52-45DC-AA24-C2CA9ABC11B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26E47032-0A52-45DC-AA24-C2CA9ABC11B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26E47032-0A52-45DC-AA24-C2CA9ABC11B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26E47032-0A52-45DC-AA24-C2CA9ABC11B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
