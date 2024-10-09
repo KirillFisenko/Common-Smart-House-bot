@@ -41,4 +41,8 @@
     <Folder Include="Resources\Documents\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Common-Smart-House-bot_common\Common-Smart-House-bot_common.csproj" />
+  </ItemGroup>
+
 </Project>

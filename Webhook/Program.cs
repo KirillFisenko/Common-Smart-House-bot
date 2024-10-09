@@ -1,4 +1,4 @@
-using Common_Smart_House_bot;
+using Common_Smart_House_bot_common;
 using Webhook;
 
 var builder = WebApplication.CreateBuilder(args);

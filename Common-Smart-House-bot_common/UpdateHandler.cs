@@ -1,4 +1,5 @@
 ﻿using Common_Smart_House_bot_common.Storage;
+using Common_Smart_House_bot_common.User;
 using Common_Smart_House_bot_common.User.Pages;
 using Common_Smart_House_bot_common.User.Pages.PageResult;
 using Telegram.Bot;
@@ -37,7 +38,7 @@ namespace Common_Smart_House_bot_common
             var lastMessage = await SendResult(client, update, telegramUserId, result);
             if (result != null)
             {
-                result.UpdatedUserState.UserData.LastMessage = new Message(lastMessage.MessageId, result.IsMedia);
+                result.UpdatedUserState.UserData.LastMessage = new User.Message(lastMessage.MessageId, result.IsMedia);
                 storage.AddOrUpdateAsync(telegramUserId, result.UpdatedUserState);
             }
         }

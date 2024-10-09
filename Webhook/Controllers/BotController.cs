@@ -1,4 +1,4 @@
-﻿using Common_Smart_House_bot.Configuration;
+﻿using Common_Smart_House_bot_common.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot;
 using Telegram.Bot.Polling;

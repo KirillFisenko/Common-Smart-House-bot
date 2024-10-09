@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Common Smart House bot\Common Smart House bot.csproj" />
+	  <ProjectReference Include="..\Common-Smart-House-bot_common\Common-Smart-House-bot_common.csproj" />
 	</ItemGroup>
 
 </Project>

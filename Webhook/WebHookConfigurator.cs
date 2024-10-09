@@ -1,5 +1,4 @@
-﻿
-using Common_Smart_House_bot.Configuration;
+﻿using Common_Smart_House_bot_common.Configuration;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 

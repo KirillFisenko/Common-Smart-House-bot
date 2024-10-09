@@ -1,5 +1,4 @@
-﻿using Common_Smart_House_bot;
-using Common_Smart_House_bot_common.Services;
+﻿using Common_Smart_House_bot_common.Services;
 using Common_Smart_House_bot_common.User.Pages.PageResult;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;

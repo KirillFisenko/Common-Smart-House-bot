@@ -1,4 +1,5 @@
 ﻿using Common_Smart_House_bot;
+using Common_Smart_House_bot_common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
