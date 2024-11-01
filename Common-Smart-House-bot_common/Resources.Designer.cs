@@ -63,16 +63,6 @@ namespace Common_Smart_House_bot_common {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] Export {
-            get {
-                object obj = ResourceManager.GetObject("Export", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         public static byte[] StartPage {
             get {
                 object obj = ResourceManager.GetObject("StartPage", resourceCulture);
@@ -82,7 +72,7 @@ namespace Common_Smart_House_bot_common {
         
         /// <summary>
         ///   Looks up a localized string similar to Добро пожаловать в &lt;b&gt;Common Smart Home&lt;/b&gt; - твой помощник умного дома.
-        ///Поддерживаемые системы: Яндекс, Xiaomi, Aqara, LG, IFEEL, Polaris, Roborock, VIDAA, Samsung..
+        ///Поддерживаемые системы: Яндекс..
         /// </summary>
         public static string StartPageText {
             get {

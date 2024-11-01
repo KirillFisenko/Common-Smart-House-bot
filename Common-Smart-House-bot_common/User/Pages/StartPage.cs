@@ -26,10 +26,6 @@ namespace Common_Smart_House_bot_common.User.Pages
                 ? View(update, userState)
                 : update.CallbackQuery.Data == "Управление умным домом"
                 ? new SmartHomeManagementPage().View(update, userState)
-                : update.CallbackQuery.Data == "Просмотр всех событий"
-                ? new LastEventsPage().View(update, userState)
-                : update.CallbackQuery.Data == "Настройка оповещений"
-                ? new SettingUpAlertsPage().View(update, userState)
                 : View(update, userState);
         }
 
