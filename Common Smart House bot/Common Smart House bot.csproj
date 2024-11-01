@@ -15,23 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Audios\notification.mp3" />
-    <None Remove="Resources\Documents\Export.xlsx" />
     <None Remove="Resources\Images\StartPage.jpg" />
-    <None Remove="Resources\Videos\invideo.mp4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\Audios\notification.mp3">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Documents\Export.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\Images\StartPage.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Videos\invideo.mp4">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

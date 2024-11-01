@@ -119,6 +119,6 @@
   </resheader>
   <data name="StartPageText" xml:space="preserve">
     <value>Добро пожаловать в &lt;b&gt;Common Smart Home&lt;/b&gt; - твой помощник умного дома.
-Поддерживаемые системы: Яндекс, Xiaomi, Aqara, LG, IFEEL, Polaris, Roborock, VIDAA, Samsung.</value>
+Поддерживаемые системы на текущий момент: Яндекс.</value>
   </data>
 </root>

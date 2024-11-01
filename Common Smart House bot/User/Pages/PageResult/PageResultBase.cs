@@ -14,9 +14,6 @@ namespace Common_Smart_House_bot.User.Pages.PageResult
             ReplyMarkup = replyMarkup;
         }
 
-        public bool IsMedia => this is PhotoPageResult ||
-                               this is VideoPageResult ||
-                               this is AudioPageResult ||
-                               this is DocumentPageResult;
+        public bool IsMedia => this is PhotoPageResult;
     }
 }

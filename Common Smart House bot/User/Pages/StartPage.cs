@@ -22,23 +22,11 @@ namespace Common_Smart_House_bot.User.Pages
 
         public PageResultBase Handle(Update update, UserState userState)
         {
-            if (update.CallbackQuery == null) 
-            { 
-                return View(update, userState);
-            }
-            if (update.CallbackQuery.Data == "Управление умным домом")
-            {
-                return new SmartHomeManagementPage().View(update, userState);
-            }
-            if (update.CallbackQuery.Data == "Просмотр всех событий")
-            {
-                return new LastEventsPage().View(update, userState);
-            }
-            if (update.CallbackQuery.Data == "Настройка оповещений")
-            {
-                return new SettingUpAlertsPage().View(update, userState);
-            }
-            return View(update, userState);
+            return update.CallbackQuery == null
+                ? View(update, userState)
+                : update.CallbackQuery.Data == "Управление умным домом"
+                ? new SmartHomeManagementPage().View(update, userState)
+                : View(update, userState);
         }
 
         private IReplyMarkup GetReplyKeyboardMarkup()
@@ -47,12 +35,6 @@ namespace Common_Smart_House_bot.User.Pages
                 [
                     [
                     InlineKeyboardButton.WithCallbackData("Управление умным домом")
-                    ],
-                    [
-                    InlineKeyboardButton.WithCallbackData("Просмотр всех событий")
-                    ],
-                    [
-                    InlineKeyboardButton.WithCallbackData("Настройка оповещений")
                     ]
                  ]);
         }
