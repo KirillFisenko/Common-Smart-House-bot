@@ -121,4 +121,8 @@
     <value>Добро пожаловать в &lt;b&gt;Common Smart Home&lt;/b&gt; - твой помощник умного дома.
 Поддерживаемые системы на текущий момент: Яндекс.</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="StartPage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\StartPage.jpg;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

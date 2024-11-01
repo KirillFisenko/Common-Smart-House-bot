@@ -1,14 +1,13 @@
 ﻿using Telegram.Bot.Types;
 
-namespace Common_Smart_House_bot.Services
+namespace Common_Smart_House_bot_common.Services
 {
     public class ResourcesService
     {
-        public static InputFileStream GetResources(string path)
+        public static InputFileStream GetResources(byte[] file)
         {
-            var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            var filename = path.Split("\\").Last();
-            return InputFile.FromStream(fileStream, filename);
+            var fileStream = new MemoryStream(file);
+            return InputFile.FromStream(fileStream);
         }
     }
 }

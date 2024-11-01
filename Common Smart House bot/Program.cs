@@ -1,4 +1,5 @@
-﻿using Common_Smart_House_bot.Storage;
+﻿using Common_Smart_House_bot;
+using Common_Smart_House_bot.Storage;
 using Common_Smart_House_bot.User;
 using Common_Smart_House_bot.User.Pages;
 using Common_Smart_House_bot.User.Pages.PageResult;
@@ -12,8 +13,7 @@ internal class Program
 
     private static async Task Main()
     {
-        var TOKEN = "7267979726:AAEam6VLHENjtsPxqxwWTzorkntxerY3vBY";
-        var telegramApiClient = new TelegramBotClient(TOKEN);
+        var telegramApiClient = new TelegramBotClient(Configuration.BotToken);
         var user = await telegramApiClient.GetMeAsync();
         Console.WriteLine($"{DateTime.Now} Начали слушать апдейты пользователя {user.Username}");
         telegramApiClient.StartReceiving(updateHandler: HandleUpdate, pollingErrorHandler: HandlePoolingError);

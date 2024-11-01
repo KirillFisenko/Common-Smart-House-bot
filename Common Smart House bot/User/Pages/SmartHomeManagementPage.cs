@@ -1,20 +1,21 @@
-﻿using Common_Smart_House_bot.User.Pages.PageResult;
-using Common_Smart_House_bot.YandexIotApiClient;
+﻿using Common_Smart_House_bot.User;
+using Common_Smart_House_bot.User.Pages;
+using Common_Smart_House_bot.User.Pages.PageResult;
+using Common_Smart_House_bot_common.YandexIotApiClient;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
-using static Common_Smart_House_bot.YandexIotApiClient.UserInfoRequest;
+using static Common_Smart_House_bot_common.YandexIotApiClient.UserInfoRequest;
 
-namespace Common_Smart_House_bot.User.Pages
+namespace Common_Smart_House_bot_common.User.Pages
 {
     public class SmartHomeManagementPage : IPage
     {
         public PageResultBase View(Update update, UserState userState)
         {
             var text = @"Управление умным домом";
-            var rootObject = UserInfoRequest.GetYandexUserInfo();
-            var devicesTypes = GetYandexDevicesTypes(rootObject);
-            var yandexRooms = GetYandexRooms(rootObject);
-            var replyMarkup = GetReplyKeyboardMarkup(rootObject.devices, yandexRooms);
+            var rootObject = GetYandexUserInfo();
+            var yandexRooms = rootObject.rooms;
+            var replyMarkup = GetReplyKeyboardMarkup(rootObject, yandexRooms);
             userState.AddPage(this);
             return new PageResultBase(text, replyMarkup)
             {
@@ -29,26 +30,35 @@ namespace Common_Smart_House_bot.User.Pages
                 return View(update, userState);
             }
 
-            var rootObject = UserInfoRequest.GetYandexUserInfo();
-            var devicesTypes = GetYandexDevicesTypes(rootObject);
-            var yandexRooms = GetYandexRooms(rootObject);
-            var lightDevices = rootObject.devices.Where(device => device.type == "devices.types.light");
-            var socketDevices = rootObject.devices.Where(device => device.type == "devices.types.socket");
+            var rootObject = GetYandexUserInfo();
 
-            foreach (var device in lightDevices)
+            foreach (var group in rootObject.groups)
             {
-                var roomName = yandexRooms.FirstOrDefault(room => room.id == device.room).name;
 
-                if (update.CallbackQuery.Data == $"Вкл. {device.name} {roomName}")
+                if (update.CallbackQuery.Data == $"Вкл. {group.name}")
                 {
-                    YandexApiClient.TurnLightOnOff(device.id, true);
-                    return View(update, userState);
+                    try
+                    {
+                        foreach (var device in group.devices)
+                        {
+                            YandexApiClient.TurnOnOff(device, true);
+                        }
+                    }
+                    catch { }
+                    return null;
                 }
 
-                if (update.CallbackQuery.Data == $"Выкл. {device.name} {roomName}")
+                if (update.CallbackQuery.Data == $"Выкл. {group.name}")
                 {
-                    YandexApiClient.TurnLightOnOff(device.id, false);
-                    return View(update, userState);
+                    try
+                    {
+                        foreach (var device in group.devices)
+                        {
+                            YandexApiClient.TurnOnOff(device, false);
+                        }
+                    }
+                    catch { }
+                    return null;
                 }
             }
 
@@ -60,32 +70,19 @@ namespace Common_Smart_House_bot.User.Pages
             return View(update, userState);
         }
 
-        private IReplyMarkup GetReplyKeyboardMarkup(IEnumerable<Device> devices, IEnumerable<Room> rooms)
+        private IReplyMarkup GetReplyKeyboardMarkup(Rootobject rootObject, IEnumerable<Room> rooms)
         {
             var keyboard = new List<List<InlineKeyboardButton>>();
-            var lightDevices = devices.Where(device => device.type == "devices.types.light");
-            var socketDevices = devices.Where(device => device.type == "devices.types.socket");
 
-            foreach (var device in lightDevices)
+            foreach (var group in rootObject.groups)
             {
-                var roomName = rooms.FirstOrDefault(room => room.id == device.room).name;
                 var row = new List<InlineKeyboardButton>
                 {
-                    InlineKeyboardButton.WithCallbackData($"Вкл. {device.name} {roomName}"),
-                    InlineKeyboardButton.WithCallbackData($"Выкл. {device.name} {roomName}")
+                    InlineKeyboardButton.WithCallbackData($"Вкл. {group.name}"),
+                    InlineKeyboardButton.WithCallbackData($"Выкл. {group.name}")
                 };
                 keyboard.Add(row);
-            }
 
-            foreach (var device in socketDevices)
-            {
-                var roomName = rooms.FirstOrDefault(room => room.id == device.room).name;
-                var row = new List<InlineKeyboardButton>
-                {
-                    InlineKeyboardButton.WithCallbackData($"Вкл. {device.name} {roomName}"),
-                    InlineKeyboardButton.WithCallbackData($"Выкл. {device.name} {roomName}")
-                };
-                keyboard.Add(row);
             }
 
             var lastRow = new List<InlineKeyboardButton>
@@ -95,11 +92,6 @@ namespace Common_Smart_House_bot.User.Pages
             keyboard.Add(lastRow);
 
             return new InlineKeyboardMarkup(keyboard);
-        }
-
-        private IEnumerable<Room> GetYandexRooms(Rootobject rootObject)
-        {
-            return rootObject.rooms;
         }
 
         private IEnumerable<string> GetYandexDevicesTypes(Rootobject rootObject)

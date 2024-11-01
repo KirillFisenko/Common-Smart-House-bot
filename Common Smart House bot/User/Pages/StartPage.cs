@@ -1,5 +1,6 @@
-﻿using Common_Smart_House_bot.Services;
-using Common_Smart_House_bot.User.Pages.PageResult;
+﻿using Common_Smart_House_bot.User.Pages.PageResult;
+using Common_Smart_House_bot_common.Services;
+using Common_Smart_House_bot_common.User.Pages;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -11,8 +12,8 @@ namespace Common_Smart_House_bot.User.Pages
         {
             var text = Resources.StartPageText;
             var replyMarkup = GetReplyKeyboardMarkup();
-            var path = "Resources\\Images\\StartPage.jpg";
-            var resource = ResourcesService.GetResources(path);
+            var image = Resources.StartPage;
+            var resource = ResourcesService.GetResources(image);
             userState.AddPage(this);
             return new PhotoPageResult(resource, text, replyMarkup)
             {

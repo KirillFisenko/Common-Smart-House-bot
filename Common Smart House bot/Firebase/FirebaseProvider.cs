@@ -5,16 +5,13 @@ namespace Common_Smart_House_bot.Firebase
 {
     public class FirebaseProvider
     {
-        private const string BasePath = "https://common-smart-house-bot-default-rtdb.firebaseio.com/";
-        private const string Secret = "IPQf8F887AUMm2eHcEbig11BV6ypcoAQhqRCxMHW";
-
         private readonly FirebaseClient client;
 
         public FirebaseProvider()
         {
-            client = new FirebaseClient(BasePath, new FirebaseOptions
+            client = new FirebaseClient(Configuration.FireBaseBasePath, new FirebaseOptions
             {
-                AuthTokenAsyncFactory = () => Task.FromResult(Secret)
+                AuthTokenAsyncFactory = () => Task.FromResult(Configuration.FireBaseSecret)
             });
         }
 
